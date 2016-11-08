@@ -1,8 +1,12 @@
 package br.com.renanbandeira.mta_atm_maps;
 
+import android.location.Address;
+import android.location.Geocoder;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
+import android.view.View;
+import android.widget.EditText;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -10,6 +14,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import java.io.IOException;
+import java.util.List;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
     GoogleMap.OnCameraIdleListener {
@@ -47,16 +53,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     mMap.getUiSettings().setTiltGesturesEnabled(true);
     mMap.setOnCameraIdleListener(this);
   }
-
   @Override public void onCameraIdle() {
     if(mMap == null) {
       return;
     }
-
     mPosition = mMap.getCameraPosition().target;
     updateUI();
   }
-
   private void updateUI() {
     //TODO add EditText update
     if (mMap == null ) return;
@@ -64,5 +67,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     mMap.addMarker(new MarkerOptions()
         .position(mPosition)
         .title("Marker in Sydney"));
+  }
+  public void submit(View v) {
+    EditText search = (EditText) findViewById(R.id.search);
+    String query = search.getText().toString().trim();
+    Address address = getAddress(query);
+    if (address != null && mMap != null) {
+      LatLng position = new LatLng(address.getLatitude(),
+                              address.getLongitude());
+      mMap.animateCamera(CameraUpdateFactory.newLatLng(position));
+    }
+  }
+  public Address getAddress(String query) {
+    try {
+      Geocoder geocoder = new Geocoder(this);
+      List<Address> addresses = geocoder.getFromLocationName(query, 1);
+      return addresses.isEmpty() ? null : addresses.get(0);
+    } catch (IOException e) {
+      e.printStackTrace();
+      return null;
+    }
   }
 }
