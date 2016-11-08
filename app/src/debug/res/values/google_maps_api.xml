@@ -7,7 +7,7 @@
     https://console.developers.google.com/flows/enableapi?apiid=maps_android_backend&keyType=CLIENT_SIDE_ANDROID&r=FF:94:3F:60:E8:30:22:92:52:85:72:AE:4D:C0:AC:C9:93:51:DB:86%3Bbr.com.renanbandeira.mta_atm_maps
 
     You can also add your credentials to an existing key, using this line:
-    
+
 
     Alternatively, follow the directions here:
     https://developers.google.com/maps/documentation/android/start#get-key
