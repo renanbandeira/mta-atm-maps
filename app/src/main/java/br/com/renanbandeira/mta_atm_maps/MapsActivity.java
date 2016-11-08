@@ -2,16 +2,14 @@ package br.com.renanbandeira.mta_atm_maps;
 
 import android.location.Address;
 import android.location.Geocoder;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.EditText;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import java.io.IOException;
@@ -23,6 +21,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
   private GoogleMap mMap;
 
   private LatLng mPosition;
+
+  private Address mAddress;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -60,13 +60,40 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     mPosition = mMap.getCameraPosition().target;
     updateUI();
   }
+
+  private Address getAddressFromLocation() {
+    try {
+      Geocoder geocoder = new Geocoder(this);
+      List<Address> addresses = geocoder
+          .getFromLocation(mPosition.latitude,
+                        mPosition.longitude, 1);
+      return addresses.isEmpty() ? null : addresses.get(0);
+    } catch (IOException e) {
+      e.printStackTrace();
+      return null;
+    }
+  }
+
   private void updateUI() {
-    //TODO add EditText update
     if (mMap == null ) return;
+    mAddress = getAddressFromLocation();
+    String snippet = "";
+    if (mAddress != null) {
+      EditText search = (EditText) findViewById(R.id.search);
+      snippet = mAddress.getLocality()
+          + ", " + mAddress.getSubThoroughfare() + " - "
+          + mAddress.getSubLocality()
+          + " - "
+          + mAddress.getSubAdminArea()
+          + ", "
+          + mAddress.getAdminArea();
+      search.setText(snippet);
+    }
     mMap.clear();
     mMap.addMarker(new MarkerOptions()
         .position(mPosition)
-        .title("Marker in Sydney"));
+        .title("Marker")
+        .snippet(snippet));
   }
   public void submit(View v) {
     EditText search = (EditText) findViewById(R.id.search);
