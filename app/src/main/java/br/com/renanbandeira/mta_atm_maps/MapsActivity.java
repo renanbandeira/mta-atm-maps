@@ -80,7 +80,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     String snippet = "";
     if (mAddress != null) {
       EditText search = (EditText) findViewById(R.id.search);
-      snippet = mAddress.getLocality()
+      snippet = mAddress.getFeatureName()
           + ", " + mAddress.getSubThoroughfare() + " - "
           + mAddress.getSubLocality()
           + " - "
